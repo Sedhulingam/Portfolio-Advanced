@@ -180,7 +180,7 @@
       color: #777;
       font-size: 0.9rem;
     }
-    /* Modal styles */
+  
     .modal {
       display: none;
       position: fixed;
@@ -290,7 +290,6 @@
     </div>
   </section>
 
-  <!-- Modal -->
   <div class="modal" id="modal">
     <div class="modal-content">
       <span class="close-btn" id="closeModal">&times;</span>
@@ -308,7 +307,6 @@
     const iframe = document.getElementById('modalIframe');
     const closeModal = document.getElementById('closeModal');
 
-    // Flip animation using GSAP
     cards.forEach(card => {
       card.addEventListener('click', () => {
         if (!card.classList.contains('flipped')) {
@@ -321,19 +319,18 @@
       });
     });
 
-    // Modal behavior
     document.querySelectorAll('.open-btn').forEach(btn => {
     btn.addEventListener('click', e => {
     e.stopPropagation();
 
-    // Ask the user for their local viewer URL
+    
     const userUrl = prompt(
       "Enter the project URL (e.g., http://localhost:9877 or https://example.com):",
       btn.getAttribute('data-url') || ""
     );
     
     try {
-      // Try creating a new URL object to validate
+      
       if (userUrl && new URL(userUrl)) {
         iframe.src = userUrl;
         modal.style.display = 'flex';
@@ -358,7 +355,7 @@
       }
     });
 
-    // Carousel
+
     const projectList = document.getElementById('projectList');
     const next = document.getElementById('next');
     const prev = document.getElementById('prev');
