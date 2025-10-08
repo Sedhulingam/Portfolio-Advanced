@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Grand Portfolio</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+    body {
+      background: #0e0e10;
+      color: #f5f5f5;
+      overflow-x: hidden;
+    }
+    header {
+      background: #151518;
+      padding: 20px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    header h1 {
+      color: #00eeff;
+      letter-spacing: 1px;
+    }
+    nav a {
+      color: #f5f5f5;
+      margin-left: 25px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+    nav a:hover {
+      color: #00ffc8;
+    }
+    section {
+      padding: 100px 60px;
+      text-align: center;
+    }
+    .hero {
+      background: linear-gradient(145deg, #141417, #1c1c20);
+      border-radius: 20px;
+      padding: 100px 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+    .hero h2 {
+      font-size: 2.5rem;
+      margin-bottom: 20px;
+      color: #00fffb;
+    }
+    .hero p {
+      font-size: 1.1rem;
+      color: #ccc;
+    }
+    .carousel {
+      position: relative;
+      overflow: hidden;
+      margin-top: 40px;
+    }
+    .projects {
+      display: flex;
+      transition: transform 0.6s ease;
+    }
+    .card {
+      width: 300px;
+      height: 380px;
+      perspective: 1000px;
+      margin: 0 15px;
+      flex-shrink: 0;
+    }
+    .card-inner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transform-style: preserve-3d;
+      transition: transform 0.8s;
+      border-radius: 20px;
+    }
+    .card.flipped .card-inner {
+      transform: rotateY(180deg);
+    }
+    .card-front, .card-back {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .card-front {
+      background: #1a1a1e;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card-front img {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: 20px 20px 0 0;
+    }
+    .card-front h3 {
+      margin: 15px 0 5px;
+      color: #00fffb;
+    }
+    .card-front p {
+      color: #ccc;
+      font-size: 0.9rem;
+      padding: 0 10px;
+    }
+    .card-front:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .card-back {
+      background: #222;
+      transform: rotateY(180deg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+    .card-back button {
+      padding: 10px 20px;
+      border: none;
+      background: #00fffb;
+      color: #000;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .card-back button:hover {
+      background: #00c9b3;
+    }
+    .card-back p {
+      color: #aaa;
+      font-size: 1rem;
+    }
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 2rem;
+      color: #00fffb;
+      cursor: pointer;
+      background: rgba(0,0,0,0.5);
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      line-height: 45px;
+      text-align: center;
+      user-select: none;
+      z-index: 10;
+    }
+    .arrow:hover {
+      background: rgba(0,0,0,0.8);
+    }
+    .arrow.left {
+      left: 15px;
+    }
+    .arrow.right {
+      right: 15px;
+    }
+    footer {
+      background: #151518;
+      text-align: center;
+      padding: 25px 0;
+      margin-top: 80px;
+      color: #777;
+      font-size: 0.9rem;
+    }
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      position: relative;
+      background: #111;
+      border-radius: 15px;
+      padding: 20px;
+      width: 90%;
+      max-width: 1000px;
+    }
+    .modal iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+      border-radius: 10px;
+    }
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #00fffb;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>My Portfolio</h1>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <h2>Hello, I'm Sedhulingam</h2>
+    <p>Welcome to my interactive project portfolio.</p>
+  </section>
+
+  <section>
+    <h2>Projects</h2>
+    <div class="carousel">
+      <div class="arrow left" id="prev">&#10094;</div>
+      <div class="projects" id="projectList">
+        <div class="card" data-index="1">
+          <div class="card-inner">
+            <div class="card-front">
+              <img src="Rerun Image.png" alt="Project One">
+              <h3>Project One</h3>
+              <p>Rerun visualization demo loaded locally.</p>
+            </div>
+            <div class="card-back">
+              <button class="open-btn" data-url="http://localhost:9877/?url=rerun%2Bhttp%3A%2F%2Flocalhost%3A9876%2Fproxy">Open Project</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" data-index="2">
+          <div class="card-inner">
+            <div class="card-front">
+              <img src="https://via.placeholder.com/300x200/202020/00fffb?text=Coming+Soon" alt="Project Two">
+              <h3>Project Two</h3>
+              <p>AI-based analysis system with automated reports.</p>
+            </div>
+            <div class="card-back">
+              <p>🚧 Coming Soon</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" data-index="3">
+          <div class="card-inner">
+            <div class="card-front">
+              <img src="https://via.placeholder.com/300x200/202020/00fffb?text=Coming+Soon" alt="Project Three">
+              <h3>Project Three</h3>
+              <p>Visualization dashboard for business insights.</p>
+            </div>
+            <div class="card-back">
+              <p>🚧 Coming Soon</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" data-index="4">
+          <div class="card-inner">
+            <div class="card-front">
+              <img src="https://via.placeholder.com/300x200/202020/00fffb?text=Coming+Soon" alt="Project Four">
+              <h3>Project Four</h3>
+              <p>Advanced simulation toolkit.</p>
+            </div>
+            <div class="card-back">
+              <p>🚧 Coming Soon</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="arrow right" id="next">&#10095;</div>
+    </div>
+  </section>
+
+  <!-- Modal -->
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="close-btn" id="closeModal">&times;</span>
+      <iframe id="modalIframe" src=""></iframe>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Sedhulingam N | Built with passion</p>
+  </footer>
+
+  <script>
+    const cards = document.querySelectorAll('.card');
+    const modal = document.getElementById('modal');
+    const iframe = document.getElementById('modalIframe');
+    const closeModal = document.getElementById('closeModal');
+
+    // Flip animation using GSAP
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        if (!card.classList.contains('flipped')) {
+          gsap.to(card, {duration: 0.3, y: -10, boxShadow: "0px 20px 40px rgba(0,0,0,0.6)"});
+          card.classList.add('flipped');
+        } else {
+          gsap.to(card, {duration: 0.3, y: 0, boxShadow: "0px 4px 15px rgba(0,0,0,0.3)"});
+          card.classList.remove('flipped');
+        }
+      });
+    });
+
+    // Modal behavior
+    document.querySelectorAll('.open-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+    e.stopPropagation();
+
+    // Ask the user for their local viewer URL
+    const userUrl = prompt("Enter your localhost project URL (e.g. http://localhost:9877/?url=rerun+http://localhost:9876/proxy)");
+
+    if (userUrl && userUrl.startsWith("http://localhost")) {
+      iframe.src = userUrl;
+      modal.style.display = 'flex';
+    } else if (userUrl) {
+      alert("Please enter a valid localhost URL starting with http://localhost");
+    }
+  });
+});
+
+    closeModal.addEventListener('click', () => {
+      modal.style.display = 'none';
+      iframe.src = '';
+    });
+
+    window.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        modal.style.display = 'none';
+        iframe.src = '';
+      }
+    });
+
+    // Carousel
+    const projectList = document.getElementById('projectList');
+    const next = document.getElementById('next');
+    const prev = document.getElementById('prev');
+    let currentIndex = 0;
+
+    next.addEventListener('click', () => {
+      const total = document.querySelectorAll('.card').length;
+      if (currentIndex < total - 3) {
+        currentIndex++;
+        projectList.style.transform = `translateX(-${currentIndex * 330}px)`;
+      }
+    });
+
+    prev.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        projectList.style.transform = `translateX(-${currentIndex * 330}px)`;
+      }
+    });
+  </script>
+</body>
+</html>
