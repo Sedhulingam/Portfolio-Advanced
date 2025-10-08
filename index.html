@@ -327,13 +327,21 @@
     e.stopPropagation();
 
     // Ask the user for their local viewer URL
-    const userUrl = prompt("Enter your localhost project URL (e.g. http://localhost:9877/?url=rerun+http://localhost:9876/proxy)");
-
-    if (userUrl && userUrl.startsWith("http://localhost")) {
-      iframe.src = userUrl;
-      modal.style.display = 'flex';
-    } else if (userUrl) {
-      alert("Please enter a valid localhost URL starting with http://localhost");
+    const userUrl = prompt(
+      "Enter the project URL (e.g., http://localhost:9877 or https://example.com):",
+      btn.getAttribute('data-url') || ""
+    );
+    
+    try {
+      // Try creating a new URL object to validate
+      if (userUrl && new URL(userUrl)) {
+        iframe.src = userUrl;
+        modal.style.display = 'flex';
+      }
+    } catch (err) {
+      if (userUrl) {
+        alert("Please enter a valid URL starting with http:// or https://");
+      }
     }
   });
 });
