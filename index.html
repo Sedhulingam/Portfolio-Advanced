@@ -335,8 +335,9 @@
         const embedOrigin = window.location.origin;
         let finalUrl = new URL(userUrl);
         finalUrl.searchParams.set('app_origin', embedOrigin);
-        
-        iframe.src = userUrl;
+
+        // iframe.src = userUrl;
+        iframe.src = finalUrl.toString();
         modal.style.display = 'flex';
       }
     } catch (err) {
