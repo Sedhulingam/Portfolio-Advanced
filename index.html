@@ -342,6 +342,25 @@
     }
   });
 });
+    window.addEventListener('message', (event) => {
+        // IMPORTANT: Verify the message comes from the trusted Rerun origin
+        const expectedOrigin = 'http://localhost:9999'; // Use the port that works
+        
+        // This check is crucial for security!
+        if (event.origin !== expectedOrigin) {
+            // console.warn("Message blocked from unexpected origin:", event.origin);
+            return;
+        }
+
+        // Print the data object to the console
+        console.log("📢 Data received from Rerun Viewer (iframe):");
+        console.log(event.data);
+        
+        // Example: If Rerun sends a specific message type, you can react to it.
+        // if (event.data && event.data.type === 'rerun_time_update') {
+        //     console.log("Current Rerun time is:", event.data.time);
+        // }
+    });
 
     closeModal.addEventListener('click', () => {
       modal.style.display = 'none';
