@@ -242,7 +242,7 @@
               <p>Show Rerun visualization loaded locally.</p>
             </div>
             <div class="card-back">
-              <button class="open-btn" data-url="http://localhost:9877/?url=rerun%2Bhttp%3A%2F%2Flocalhost%3A9876%2Fproxy">Open Project</button>
+              <button class="open-btn" data-url="http://localhost:9899/?url=rerun%2Bhttp%3A%2F%2Flocalhost%3A9876%2Fproxy">Open Project</button>
             </div>
           </div>
         </div>
@@ -323,7 +323,7 @@
     btn.addEventListener('click', e => {
     e.stopPropagation();
 
-    
+    const defaultUrl = "http://localhost:9999/?url=rerun%2Bhttp%3A%2F%2Flocalhost%3A9876%2Fproxy"; 
     const userUrl = prompt(
       "Enter the project URL (e.g., http://localhost:9877 or https://example.com):",
       btn.getAttribute('data-url') || ""
@@ -332,6 +332,10 @@
     try {
       
       if (userUrl && new URL(userUrl)) {
+        const embedOrigin = window.location.origin;
+        let finalUrl = new URL(userUrl);
+        finalUrl.searchParams.set('app_origin', embedOrigin);
+        
         iframe.src = userUrl;
         modal.style.display = 'flex';
       }
