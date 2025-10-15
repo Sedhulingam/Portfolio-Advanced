@@ -342,14 +342,14 @@
       }
     } catch (err) {
       if (userUrl) {
-        alert("Please enter a valid URL starting with http:// or https://");
+        alert("Please enter a valid URL starting with https://");
       }
     }
   });
 });
     window.addEventListener('message', (event) => {
         // IMPORTANT: Verify the message comes from the trusted Rerun origin
-        const expectedOrigin = 'http://localhost:9999'; // Use the port that works
+        const expectedOrigin = 'http://localhost:9999/?url=rerun%2Bhttp%3A%2F%2Flocalhost%3A9876%2Fproxy'; // Use the port that works
         
         // This check is crucial for security!
         if (event.origin !== expectedOrigin) {
@@ -362,9 +362,9 @@
         console.log(event.data);
         
         // Example: If Rerun sends a specific message type, you can react to it.
-        // if (event.data && event.data.type === 'rerun_time_update') {
-        //     console.log("Current Rerun time is:", event.data.time);
-        // }
+        if (event.data && event.data.type === 'rerun_time_update') {
+            console.log("Current Rerun time is:", event.data.time);
+        }
     });
 
     closeModal.addEventListener('click', () => {
