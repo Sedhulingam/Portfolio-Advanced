@@ -302,103 +302,105 @@
   </footer>
 
   <script>
-    const cards = document.querySelectorAll('.card');
-    const modal = document.getElementById('modal');
-    const iframe = document.getElementById('modalIframe');
-    const closeModal = document.getElementById('closeModal');
+  const cards = document.querySelectorAll('.card');
+  const modal = document.getElementById('modal');
+  const iframe = document.getElementById('modalIframe');
+  const closeModal = document.getElementById('closeModal');
 
-    cards.forEach(card => {
-      card.addEventListener('click', () => {
-        if (!card.classList.contains('flipped')) {
-          gsap.to(card, {duration: 0.3, y: -10, boxShadow: "0px 20px 40px rgba(0,0,0,0.6)"});
-          card.classList.add('flipped');
-        } else {
-          gsap.to(card, {duration: 0.3, y: 0, boxShadow: "0px 4px 15px rgba(0,0,0,0.3)"});
-          card.classList.remove('flipped');
-        }
-      });
+  // --- Card flip logic ---
+  cards.forEach(card => {
+    card.addEventListener('click', () => {
+      if (!card.classList.contains('flipped')) {
+        gsap.to(card, { duration: 0.3, y: -10, boxShadow: "0px 20px 40px rgba(0,0,0,0.6)" });
+        card.classList.add('flipped');
+      } else {
+        gsap.to(card, { duration: 0.3, y: 0, boxShadow: "0px 4px 15px rgba(0,0,0,0.3)" });
+        card.classList.remove('flipped');
+      }
     });
+  });
 
-    document.querySelectorAll('.open-btn').forEach(btn => {
+  // --- Open Rerun project modal ---
+  document.querySelectorAll('.open-btn').forEach(btn => {
     btn.addEventListener('click', e => {
-    e.stopPropagation();
+      e.stopPropagation();
 
-    const defaultUrl = "http://localhost:9999/?url=rerun%2Bhttp%3A%2F%2Flocalhost%3A9876%2Fproxy"; 
-    const userUrl = prompt(
-      "Enter the project URL (e.g., http://localhost:9877 or https://example.com):",
-      btn.getAttribute('data-url') || ""
-    );
-    
-    try {
-      
-      if (userUrl && new URL(userUrl)) {
-        const embedOrigin = window.location.origin;
-        let finalUrl = new URL(userUrl);
-        finalUrl.searchParams.set('app_origin', embedOrigin);
+      const defaultUrl = btn.getAttribute('data-url');
+      const userUrl = prompt(
+        "Enter the project URL (e.g., http://localhost:9877 or https://example.com):",
+        defaultUrl || ""
+      );
 
-        // iframe.src = userUrl;
-        iframe.src = finalUrl.toString();
-        modal.style.display = 'flex';
+      try {
+        if (userUrl && new URL(userUrl)) {
+          const embedOrigin = window.location.origin;
+          const finalUrl = new URL(userUrl);
+          finalUrl.searchParams.set('app_origin', embedOrigin);
+
+          iframe.src = finalUrl.toString();
+          modal.style.display = 'flex';
+        }
+      } catch (err) {
+        if (userUrl) {
+          alert("⚠️ Please enter a valid URL starting with http:// or https://");
+        }
       }
-    } catch (err) {
-      if (userUrl) {
-        alert("Please enter a valid URL starting with https://");
-      }
+    });
+  });
+
+  // --- Receive messages from Rerun iframe ---
+  window.addEventListener('message', (event) => {
+    // The origin will only be host + port (not full URL)
+    const allowedOrigin = 'http://localhost:9999';
+
+    if (event.origin !== allowedOrigin) {
+      console.warn("🚫 Blocked message from unexpected origin:", event.origin);
+      return;
+    }
+
+    console.log("📢 Message received from Rerun iframe:");
+    console.log(event.data);
+
+    // Example: handle specific message type
+    if (event.data && event.data.type === 'rerun_time_update') {
+      console.log("🕒 Current Rerun time:", event.data.time);
     }
   });
-});
-    window.addEventListener('message', (event) => {
-        // IMPORTANT: Verify the message comes from the trusted Rerun origin
-        const expectedOrigin = 'http://localhost:9999/?url=rerun%2Bhttp%3A%2F%2Flocalhost%3A9876%2Fproxy'; // Use the port that works
-        
-        // This check is crucial for security!
-        if (event.origin !== expectedOrigin) {
-            // console.warn("Message blocked from unexpected origin:", event.origin);
-            return;
-        }
 
-        // Print the data object to the console
-        console.log("📢 Data received from Rerun Viewer (iframe):");
-        console.log(event.data);
-        
-        // Example: If Rerun sends a specific message type, you can react to it.
-        if (event.data && event.data.type === 'rerun_time_update') {
-            console.log("Current Rerun time is:", event.data.time);
-        }
-    });
+  // --- Close modal logic ---
+  closeModal.addEventListener('click', () => {
+    modal.style.display = 'none';
+    iframe.src = '';
+  });
 
-    closeModal.addEventListener('click', () => {
+  window.addEventListener('click', (e) => {
+    if (e.target === modal) {
       modal.style.display = 'none';
       iframe.src = '';
-    });
+    }
+  });
 
-    window.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.style.display = 'none';
-        iframe.src = '';
-      }
-    });
+  // --- Carousel controls ---
+  const projectList = document.getElementById('projectList');
+  const next = document.getElementById('next');
+  const prev = document.getElementById('prev');
+  let currentIndex = 0;
 
+  next.addEventListener('click', () => {
+    const total = document.querySelectorAll('.card').length;
+    if (currentIndex < total - 3) {
+      currentIndex++;
+      projectList.style.transform = `translateX(-${currentIndex * 330}px)`;
+    }
+  });
 
-    const projectList = document.getElementById('projectList');
-    const next = document.getElementById('next');
-    const prev = document.getElementById('prev');
-    let currentIndex = 0;
+  prev.addEventListener('click', () => {
+    if (currentIndex > 0) {
+      currentIndex--;
+      projectList.style.transform = `translateX(-${currentIndex * 330}px)`;
+    }
+  });
+</script>
 
-    next.addEventListener('click', () => {
-      const total = document.querySelectorAll('.card').length;
-      if (currentIndex < total - 3) {
-        currentIndex++;
-        projectList.style.transform = `translateX(-${currentIndex * 330}px)`;
-      }
-    });
-
-    prev.addEventListener('click', () => {
-      if (currentIndex > 0) {
-        currentIndex--;
-        projectList.style.transform = `translateX(-${currentIndex * 330}px)`;
-      }
-    });
-  </script>
 </body>
 </html>
